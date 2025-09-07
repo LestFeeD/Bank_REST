@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/bank_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:1q2q3q4q5q6q}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/migration/main-changelog.yaml
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /docs/openapi.yaml
+
+
+server:
+  port: 8080
+
+auth:
+  token:
+    jwtSecret: 367639123SD42264529ASDA576D5XZZX777217A25432A462D
+    expiration: 3600000
+

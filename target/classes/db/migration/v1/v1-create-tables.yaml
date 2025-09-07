@@ -1,0 +1,151 @@
+databaseChangeLog:
+  - changeSet:
+      id: v1-1
+      author: Oleg
+      changes:
+        - createTable:
+            tableName: role_user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: v1-2
+      author: Oleg
+      changes:
+        - createTable:
+            tableName: status_card
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: v1-3
+      author: Oleg
+      changes:
+        - createTable:
+            tableName: user_account
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: VARCHAR(40)
+              - column:
+                  name: password
+                  type: VARCHAR(140)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_deleted
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id_role
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: user_account
+            baseColumnNames: id_role
+            constraintName: FK_role_user
+            referencedTableName: role_user
+            referencedColumnNames: id
+
+  - changeSet:
+      id: v1-4
+      author: Oleg
+      changes:
+        - createTable:
+            tableName: bank_card
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: card_number
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: valid_thru
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: NUMERIC(15,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id_status_card
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id_user
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: bank_card
+            baseColumnNames: id_status_card
+            constraintName: FK_status_card
+            referencedTableName: status_card
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: bank_card
+            baseColumnNames: id_user
+            constraintName: FK_user_card
+            referencedTableName: user_account
+            referencedColumnNames: id

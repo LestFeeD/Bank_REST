@@ -1,0 +1,133 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-5
+      author: Oleg
+      changes:
+        - insert:
+            tableName: role_user
+            columns:
+              - column:
+                  name: name
+                  value: "USER"
+        - insert:
+            tableName: role_user
+            columns:
+              - column:
+                  name: name
+                  value: "ADMIN"
+        - insert:
+            tableName: status_card
+            columns:
+              - column:
+                  name: name
+                  value: "ACTIVE"
+        - insert:
+            tableName: status_card
+            columns:
+              - column:
+                  name: name
+                  value: "BLOCKED"
+        - insert:
+            tableName: status_card
+            columns:
+              - column:
+                  name: name
+                  value: "EXPIRED"
+  - changeSet:
+      id: v1-6
+      author: Oleg
+      changes:
+        - insert:
+            tableName: user_account
+            columns:
+              - column:
+                  name: last_name
+                  value: "Петрова"
+              - column:
+                  name: name
+                  value: "Анна"
+              - column:
+                  name: surname
+                  value: "Анатольевна"
+              - column:
+                  name: email
+                  value: "anna@gmail.com"
+              - column:
+                  name: phone
+                  value: "89186127211"
+              - column:
+                  name: password
+                  value: "$2a$10$mc0ZKoHYbg4VUfFgtRBJtu4/N8p5XbiJsc.XlHq.DyJF91jTwfxKq"
+              - column:
+                  name: is_deleted
+                  valueNumeric: 0
+              - column:
+                  name: id_role
+                  valueNumeric: 1
+        - insert:
+            tableName: user_account
+            columns:
+              - column:
+                  name: last_name
+                  value: "Иванов"
+              - column:
+                  name: name
+                  value: "Павел"
+              - column:
+                  name: surname
+                  value: "Артёмович"
+              - column:
+                  name: email
+                  value: "ivanov@gmail.com"
+              - column:
+                  name: phone
+                  value: "89186127211"
+              - column:
+                  name: password
+                  value: "$2a$10$mc0ZKoHYbg4VUfFgtRBJtu4/N8p5XbiJsc.XlHq.DyJF91jTwfxKq"
+              - column:
+                  name: is_deleted
+                  valueNumeric: 0
+              - column:
+                  name: id_role
+                  valueNumeric: 2
+  - changeSet:
+      id: v1-7
+      author: Oleg
+      changes:
+        - insert:
+            tableName: bank_card
+            columns:
+              - column:
+                  name: card_number
+                  value: "1234567812345678"
+              - column:
+                  name: valid_thru
+                  valueDate: "2025-12-31"
+              - column:
+                  name: balance
+                  valueNumeric: 10000.50
+              - column:
+                  name: id_status_card
+                  valueNumeric: 1
+              - column:
+                  name: id_user
+                  valueNumeric: 1
+        - insert:
+            tableName: bank_card
+            columns:
+              - column:
+                  name: card_number
+                  value: "1234367116344660"
+              - column:
+                  name: valid_thru
+                  valueDate: "2025-12-31"
+              - column:
+                  name: balance
+                  valueNumeric: 20.50
+              - column:
+                  name: id_status_card
+                  valueNumeric: 1
+              - column:
+                  name: id_user
+                  valueNumeric: 1

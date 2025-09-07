@@ -1,0 +1,501 @@
+openapi: 3.0.3
+info:
+  title: Bank API
+  version: 1.0
+  description: REST API для управления банковскими картами
+  contact:
+    name: Oleg
+    email: axella050506@gmail.com
+tags:
+  - name: BankCardController
+    description: Операции с банковскими картами
+  - name: UserController
+    description: Операции с пользователями
+
+servers:
+  - url: http://localhost:8080/
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RoleEnum:
+      type: string
+      enum:
+        - ADMIN
+        - USER
+
+    RoleUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+        - id
+        - name
+
+    StatusCardEnum:
+      type: string
+      enum:
+        - ACTIVE
+        - BLOCKED
+        - EXPIRED
+
+    StatusCard:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          $ref: '#/components/schemas/StatusCardEnum'
+      required:
+        - id
+        - name
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        lastName:
+          type: string
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        role:
+          $ref: '#/components/schemas/RoleUser'
+        bankCards:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankCard'
+      required:
+        - id
+        - lastName
+        - name
+        - surname
+        - email
+        - role
+
+    BankCard:
+      type: object
+      properties:
+        id:
+          type: integer
+        cardNumber:
+          type: string
+        validThru:
+          type: string
+          format: date
+        balance:
+          type: number
+          format: double
+        statusCard:
+          $ref: '#/components/schemas/StatusCard'
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+        - id
+        - cardNumber
+        - validThru
+        - balance
+
+    BankCardResponseDto:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+        validThru:
+          type: string
+          format: date
+        balance:
+          type: number
+          format: double
+        idStatusCart:
+          type: integer
+      required:
+        - cardNumber
+        - validThru
+        - balance
+        - idStatusCart
+
+    UserResponseDto:
+      type: object
+      properties:
+        lastName:
+          type: string
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+      required:
+        - lastName
+        - name
+        - surname
+        - email
+        - phone
+        - role
+
+    BankCardDto:
+      type: object
+      properties:
+        validThru:
+          type: string
+          format: date
+        balance:
+          type: number
+          format: double
+        idUser:
+          type: integer
+      required:
+        - cardNumber
+        - validThru
+        - balance
+        - idStatusCart
+        - idUser
+
+    TransferCardDto:
+      type: object
+      properties:
+        fromCardId:
+          type: integer
+        toCardId:
+          type: integer
+        amount:
+          type: number
+          format: double
+      required:
+        - fromCardId
+        - toCardId
+        - amount
+
+    UserDto:
+      type: object
+      properties:
+        lastName:
+          type: string
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+      required:
+        - lastName
+        - name
+        - surname
+        - email
+        - password
+        - phone
+
+paths:
+  /all-cards:
+    get:
+      summary: Получить все банковские карты (только для ADMIN)
+      tags:
+        - BankCardController
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          default: 0
+        - in: query
+          name: size
+          schema:
+            type: integer
+          default: 5
+      responses:
+        '200':
+          description: Страница банковских карт
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankCardResponseDto'
+        '401':
+          description: Unauthorized
+
+  /user/cards:
+    get:
+      summary: Получить карты текущего пользователя (только для USER)
+      tags:
+        - BankCardController
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          default: 0
+        - in: query
+          name: size
+          schema:
+            type: integer
+          default: 5
+        - in: query
+          name: search
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: Страница банковских карт пользователя
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankCardResponseDto'
+        '401':
+          description: Unauthorized
+
+  /card:
+    post:
+      summary: Создать новую банковскую карту (только для ADMIN)
+      tags:
+        - BankCardController
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankCardDto'
+      responses:
+        '201':
+          description: Карта создана
+        '401':
+          description: Unauthorized
+
+  /card/{cartId}/block:
+    patch:
+      summary: Заблокировать карту пользователя
+      tags:
+        - BankCardController
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Карта заблокирована
+        '401':
+          description: Unauthorized
+
+  /card/{cartId}/activate:
+    patch:
+      summary: Активировать карту (только для ADMIN)
+      tags:
+        - BankCardController
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Карта активирована
+        '401':
+          description: Unauthorized
+
+  /card/{cartId}/balance:
+    get:
+      summary: Получить баланс карты (только для USER)
+      tags:
+        - BankCardController
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Баланс карты
+          content:
+            application/json:
+              schema:
+                type: number
+                format: double
+        '401':
+          description: Unauthorized
+
+  /card/transfer:
+    patch:
+      summary: Перевод с карты на карту (только для USER)
+      tags:
+        - BankCardController
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferCardDto'
+      responses:
+        '200':
+          description: Перевод выполнен
+        '401':
+          description: Unauthorized
+
+  /card/{cardId}:
+    delete:
+      summary: Удалить карту (только для ADMIN)
+      tags:
+        - BankCardController
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cardId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Карта удалена
+        '401':
+          description: Unauthorized
+  /user/{userId}:
+    get:
+      summary: Получить пользователя по ID (только для ADMIN)
+      tags:
+        - UserController
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Пользователь найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDto'
+        '401':
+          description: Unauthorized
+
+  /registration:
+    post:
+      summary: Регистрация нового пользователя
+      tags:
+        - UserController
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        '200':
+          description: Пользователь успешно зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDto'
+
+  /login:
+    post:
+      summary: Вход пользователя
+      tags:
+        - UserController
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDto'
+      responses:
+        '200':
+          description: Успешный вход, возвращает JWT
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+
+  /user:
+    patch:
+      summary: Редактирование пользователя (только для ADMIN)
+      tags:
+        - UserController
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        '200':
+          description: Пользователь успешно обновлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDto'
+        '401':
+          description: Unauthorized
+
+  /user/{userId}/block:
+    patch:
+      summary: Заблокировать пользователя (только для ADMIN)
+      tags:
+        - UserController
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Пользователь заблокирован
+        '401':
+          description: Unauthorized
